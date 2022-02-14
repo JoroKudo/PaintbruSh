@@ -25,9 +25,9 @@ SIG_UP=USR1
 SIG_RIGHT=USR2
 SIG_DOWN=URG
 SIG_LEFT=IO
-SIG_QUIT=WINCH
+SIG_QUIT=SIGQUIT
 SIG_DEAD=HUP
-SIG_RED=ASE
+SIG_RED=WINCH
 
 move_r=([0]=-1 [1]=0 [2]=1 [3]=0)
 move_c=([0]=0 [1]=1 [2]=0 [3]=-1)
@@ -38,6 +38,7 @@ init_screen() {
     stty -echo
     for ((i=0; i<height; i++)); do
         for ((j=0; j<width; j++)); do
+
             eval "arr$i[$j]=' '"
         done
     done
@@ -124,7 +125,7 @@ move_brush() {
 
     eval "local pos=\${arr$newhead_r[$newhead_c]}"
 	eval "arr$newhead_r[$newhead_c]=\"${no_color}🖌$no_color\""
-   	eval "arr$head_r[$head_c]=\"${brush_color}o$no_color\""
+   	eval "arr$head_r[$head_c]=\"${brush_color}█$no_color\""
 	head_c=$newhead_c
         head_r=$newhead_r
     local d=$(echo $body | grep -o '[0-3]$')
