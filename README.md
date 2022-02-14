@@ -9,5 +9,5 @@ l move right
 k move up
 q quit
 
-r change color to red (doesnt work yet)
+r change color to red
 
