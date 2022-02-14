@@ -150,13 +150,13 @@ getchar() {
                   ;;
             [rR]) kill -$SIG_RED $app_pid
                  ;;
-            [iI]) kill -$SIG_UP $app_pid
+            [kK]) kill -$SIG_UP $app_pid
                   ;;
             [lL]) kill -$SIG_RIGHT $app_pid
                   ;;
-            [kK]) kill -$SIG_DOWN $app_pid
+            [jJ]) kill -$SIG_DOWN $app_pid
                   ;;
-            [jJ]) kill -$SIG_LEFT $app_pid
+            [hH]) kill -$SIG_LEFT $app_pid
                   ;;
 
        esac
