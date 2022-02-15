@@ -3,16 +3,13 @@
 
 A terminal based drawing app
 
-controlls are
-
-h move left
-j move down
-l move right
-k move up
-q quit
-
-n lift pen ( you wont see where the pen is while it is lifted. i am trying to fix this)
-m put pen down
-
-r change color to red 
+###The controls are:
+- H move left
+- J move down
+- L move right
+- K move up
+- Q quit
+- N lift pen ( pen is invisible while it is lifted. i am trying to fix this)
+- M put pen down
+- R change color to red 
 
