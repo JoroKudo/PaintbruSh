@@ -71,7 +71,6 @@ init_tools() {
 
   body=''
 
-
   local p=${move_r[1]}
   local q=${move_c[1]}
 
@@ -112,8 +111,6 @@ move_brush() {
     head_r=$head_rtemp
 
   fi
-
-
 
 }
 
