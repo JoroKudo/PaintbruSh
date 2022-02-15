@@ -9,5 +9,8 @@ l move right
 k move up
 q quit
 
-r change color to red (doesnt work yet)
+n lift pen ( you wont see where the pen is while it is lifted. i am trying to fix this)
+m put pen down
+
+r change color to red 
 
