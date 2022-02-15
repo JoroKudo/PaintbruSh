@@ -1,5 +1,6 @@
 # PaintbruSh
 ![Imgur](https://i.imgur.com/6QdhCJy.png)
+
 A terminal based drawing app
 
 controlls are
