@@ -22,6 +22,7 @@ move_c=([0]=0 [1]=1 [2]=0 [3]=-1)
 
 init_screen() {
   clear
+
   echo -ne "\e[?25l"
   stty -echo
   for ((i = 0; i < height; i++)); do
@@ -104,6 +105,7 @@ move_brush() {
 
   head_ctemp=$newhead_c
   head_rtemp=$newhead_r
+
   if [ "$eraser" -eq 0 ]; then
     eval "arr$newhead_r[$newhead_c]=\"${no_color}🖌$no_color\""
     eval "arr$head_r[$head_c]=\"${brush_color}█$no_color\""
@@ -151,6 +153,9 @@ draw_loop() {
       ;;
     ["n"])
       eraser=1
+      ;;
+    [1,2,3,4,5,6,7,8])
+      brush_color="\e["$((29 + key))";"$((39 + key))"m"
       ;;
     esac
     if [ "$delta_dir" -ne -1 ]; then
