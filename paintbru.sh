@@ -2,35 +2,38 @@
 
 IFS=''
 
-declare -i height=$(($(tput lines) - 5)) width=$(($(tput cols) - 2))
+declare readonly -i height=$(($(tput lines) - 5)) width=$(($(tput cols) - 2))
 
 declare -i head_r head_c
 declare -i head_rtemp head_ctemp
-
+declare matrix
 declare body
-
+colornr=30
 declare -i direction delta_dir
 
 border_color="\e[30;43m"
 brush_color="\e[32;42m"
 no_color="\e[0m"
 
-# signals
 
 move_r=([0]=-1 [1]=0 [2]=1 [3]=0)
 move_c=([0]=0 [1]=1 [2]=0 [3]=-1)
 
 init_screen() {
   clear
-
   echo -ne "\e[?25l"
   stty -echo
   for ((i = 0; i < height; i++)); do
     for ((j = 0; j < width; j++)); do
 
       eval "arr$i[$j]=' '"
+
+     eval "matrix$i[$j]='0'"
     done
+
   done
+
+
 }
 
 move_and_draw() {
@@ -107,10 +110,14 @@ move_brush() {
   head_rtemp=$newhead_r
 
   if [ "$eraser" -eq 0 ]; then
+
     eval "arr$newhead_r[$newhead_c]=\"${no_color}🖌$no_color\""
-    eval "arr$head_r[$head_c]=\"${brush_color}█$no_color\""
-    head_c=$head_ctemp
-    head_r=$head_rtemp
+    eval "arr$head_r[$head_c]=\"${brush_color}1$no_color\""
+     eval "matrix$head_r[$head_c]=\"$((colornr-30))\""
+
+      head_c=$head_ctemp
+       head_r=$head_rtemp
+
 
   fi
 
@@ -126,7 +133,9 @@ change_dir() {
 draw_loop() {
 
   while [ "$alive" -eq 0 ]; do
+
     read -rsn1 key
+
     case "$key" in
     ["q"])
       kill -"$SIG_QUIT"
@@ -151,11 +160,28 @@ draw_loop() {
       eraser=0
 
       ;;
+
+    ["t"])
+      f2=" %9s"
+
+      for ((i = 1; i <= height; i++)); do
+
+        for ((j = 1; j<= width; j++)); do
+      eval echo -n "\"\${matrix$i[$j]}\""
+
+
+        done
+        echo
+      done
+
+      ;;
     ["n"])
       eraser=1
       ;;
-    [1,2,3,4,5,6,7,8])
-      brush_color="\e["$((29 + key))";"$((39 + key))"m"
+    [0,1,2,3,4,5,6,7])
+      brush_color="\e["$((30 + key))";"$((40 + key))"m"
+      colornr=$((30 + key))
+
       ;;
     esac
     if [ "$delta_dir" -ne -1 ]; then
@@ -184,4 +210,5 @@ draw_board
 draw_loop
 
 clear_app
+
 exit 0
