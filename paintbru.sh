@@ -94,6 +94,7 @@ init_tools() {
   head_rtemp=$((height / 2 - 2))
   head_ctemp=$((width / 2))
 
+
   body=''
 
   local p=${move_r[1]}
