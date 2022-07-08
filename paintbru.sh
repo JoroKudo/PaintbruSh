@@ -2,7 +2,6 @@
 
 IFS=''
 
-
 declare readonly -i height=$(($(tput lines) - 5)) width=$(($(tput cols) - 2))
 
 declare -i head_r head_c
@@ -11,36 +10,30 @@ declare body
 declare matrix
 colornr=2
 declare -i direction delta_dir
-
+icon=""
 border_color="\e[0;34;47m"
 brush_color="\e[32;42m"
 no_color="\e[0m"
 tile_color="\e[0m"
-  coloreto="\e[0;31;47m"
-
+coloreto="\e[0;31;47m"
 
 move_r=([0]=-1 [1]=0 [2]=1 [3]=0)
 move_c=([0]=0 [1]=1 [2]=0 [3]=-1)
 
 init_screen() {
 
-
-
   clear
   echo -ne "\e[?25l"
   stty -echo
-  for ((i = 0; i < height-2; i++))
-  do
-    for ((j = 0; j < width; j++))
-    do
+  for ((i = 0; i < height - 2; i++)); do
+    for ((j = 0; j < width; j++)); do
 
       eval "arr$i[$j]=' '"
 
-     eval "matrix$i[$j]='0'"
+      eval "matrix$i[$j]='0'"
     done
 
   done
-
 
 }
 
@@ -51,53 +44,44 @@ move_and_draw() {
 
 draw_board() {
   move_and_draw 1 1 "$border_color+$no_color"
-  for ((i = 2; i <= width + 1; i++))
-  do
+  for ((i = 2; i <= width + 1; i++)); do
     move_and_draw 1 "$i" "$border_color-$no_color"
   done
   move_and_draw 1 $((width + 2)) "$border_color+$no_color"
   echo
 
-  for ((i = 0; i < height-2; i++))
-  do
+  for ((i = 0; i < height - 2; i++)); do
     move_and_draw $((i + 2)) 1 "$border_color|$no_color"
     eval echo -en "\"\${arr$i[*]}\""
     echo -e "$border_color|$no_color"
   done
 
-  move_and_draw $((height )) 1 "$border_color+$no_color"
-  for ((i = 2; i <= width + 1; i++))
-  do
-    move_and_draw $((height )) "$i" "$border_color-$no_color"
+  move_and_draw $((height)) 1 "$border_color+$no_color"
+  for ((i = 2; i <= width + 1; i++)); do
+    move_and_draw $((height)) "$i" "$border_color-$no_color"
   done
-  move_and_draw $((height )) $((width + 2)) "$border_color+$no_color"
-
+  move_and_draw $((height)) $((width + 2)) "$border_color+$no_color"
 
   echo -e "$coloreto$coloreto"
-       printf '\e[K'
+  printf '\e[K'
 
-      printf "\n"
-  print_style $coloreto $coloreto " <[N] LIFT>  <[1-7] COLORS>  <[0] ERASE>  <[M] LOWER>       CURRENT  "
-  printf "$brush_color%b$coloreto\n" "   ";
+  printf "\n"
+  print_style $coloreto $coloreto " <[SPACE] LIFT/LOWER PEN>    <[1-7] COLORS>  <[0] ERASE>        CURRENT  "
+  printf "$brush_color%b$coloreto\n" "   "
 
-  print_style $coloreto $coloreto " <[H] LEFT>  <[J] DOWN>      <[K] UP>     <[L] RIGHT>        COLOR   "
-    printf "$brush_color%b$coloreto\n" "   "
-     printf '\e[K'
+  print_style $coloreto $coloreto " <[H] LEFT>    <[J] DOWN>    <[K] UP>        <[L] RIGHT>         COLOR   "
+  printf "$brush_color%b$coloreto\n" "   "
+  printf '\e[K'
 
-    printf " "
-
-
+  printf " "
 
   echo
 }
-print_style () {
+print_style() {
 
+  printf '\e[K'
 
-
- printf '\e[K'
-
-
-    printf "$1%b$2" "$3";
+  printf "$1%b$2" "$3"
 
 }
 init_tools() {
@@ -141,35 +125,34 @@ move_brush() {
   local newhead_r=$((head_rtemp + move_r[direction]))
   local newhead_c=$((head_ctemp + move_c[direction]))
 
-  eval "local pos=\${arr$newhead_r[$newhead_c]}"
-
   head_ctemp=$newhead_c
   head_rtemp=$newhead_r
+  show_brush $newhead_r $newhead_c
+}
 
-  if [ "$eraser" -eq 0 ];
-  then
+show_brush() {
+  eval "local pos=\${arr$1[$2]}"
 
-    eval "arr$newhead_r[$newhead_c]=\"${no_color}■$no_color\""
-    eval "arr$head_r[$head_c]=\"${brush_color}1$no_color\""
-     eval "matrix$head_r[$head_c]=\"$((colornr))\""
-
-      head_c=$head_ctemp
-       head_r=$head_rtemp
-else
   tile_color_index="matrix$head_r[$head_c]"
-    tile_color_index_new="matrix$newhead_r[$newhead_c]"
+  tile_color_index_new="matrix$1[$2]"
 
-  tile_color="\e["$((37))";"$((40 + tile_color_index_new))"m"
-  tile_color_symbol="\e["$((30+tile_color_index))";"$((40 + tile_color_index))"m"
+  tile_color="\e["$((90))";"$((40 + tile_color_index_new))"m"
+  tile_color_symbol="\e["$((30 + tile_color_index))";"$((40 + tile_color_index))"m"
+  if [ "$eraser" -eq 0 ]; then
+    icon="■"
+    eval "arr$1[$2]=\"${tile_color}■$no_color\""
+    eval "arr$head_r[$head_c]=\"${brush_color}1$no_color\""
+    eval "matrix$head_r[$head_c]=\"$((colornr))\""
 
-      eval "arr$newhead_r[$newhead_c]=\"${tile_color}□$no_color\""
+  else
+    icon="□"
+    eval "arr$1[$2]=\"${tile_color}□$no_color\""
     eval "arr$head_r[$head_c]=\"${tile_color_symbol}1$no_color\""
 
-  head_c=$head_ctemp
-       head_r=$head_rtemp
-
-
   fi
+
+  head_c=$head_ctemp
+  head_r=$head_rtemp
 
 }
 
@@ -204,36 +187,38 @@ draw_loop() {
     ["h"])
       delta_dir=3
       ;;
-    ["m"])
-      eraser=0
-      ;;
 
-    ["t"])
-
+    \
+      ["t"])
 
       for ((i = 1; i <= height; i++)); do
 
-        for ((j = 1; j<= width; j++)); do
-      eval echo -n "\"\${matrix$i[$j]}\""
-
+        for ((j = 1; j <= width; j++)); do
+          eval echo -n "\"\${matrix$i[$j]}\""
 
         done
+
         echo
       done
 
       ;;
-    ["n"])
-      eraser=1
+    [" "])
+      if [ "$eraser" -eq 0 ]; then
+
+        eraser=1
+      else
+        eraser=0
+      fi
+
       ;;
 
     [0,1,2,3,4,5,6,7])
       colornr=$((key))
-change_color
+      change_color
 
       ;;
     esac
-    if [ "$delta_dir" -ne -1 ];
-    then
+    if [ "$delta_dir" -ne -1 ]; then
       change_dir $delta_dir
       move_brush
 
@@ -251,7 +236,7 @@ clear_app() {
   echo -e "\e[?25h"
 }
 change_color() {
-      brush_color="\e["$((30 + colornr))";"$((40 + colornr))"m"
+  brush_color="\e["$((30 + colornr))";"$((40 + colornr))"m"
 
 }
 
