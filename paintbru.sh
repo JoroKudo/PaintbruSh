@@ -149,7 +149,7 @@ move_brush() {
   if [ "$eraser" -eq 0 ];
   then
 
-    eval "arr$newhead_r[$newhead_c]=\"${border_color}V$no_color\""
+    eval "arr$newhead_r[$newhead_c]=\"${no_color}V$no_color\""
     eval "arr$head_r[$head_c]=\"${brush_color}1$no_color\""
      eval "matrix$head_r[$head_c]=\"$((colornr))\""
 
@@ -191,9 +191,7 @@ draw_loop() {
       kill -"$SIG_QUIT"
       return
       ;;
-    ["r"])
-      brush_color="\033[0;31m"
-      ;;
+
     ["k"])
       delta_dir=0
       ;;
