@@ -149,7 +149,7 @@ move_brush() {
   if [ "$eraser" -eq 0 ];
   then
 
-    eval "arr$newhead_r[$newhead_c]=\"${no_color}V$no_color\""
+    eval "arr$newhead_r[$newhead_c]=\"${no_color}■$no_color\""
     eval "arr$head_r[$head_c]=\"${brush_color}1$no_color\""
      eval "matrix$head_r[$head_c]=\"$((colornr))\""
 
@@ -162,7 +162,7 @@ else
   tile_color="\e["$((37))";"$((40 + tile_color_index_new))"m"
   tile_color_symbol="\e["$((30+tile_color_index))";"$((40 + tile_color_index))"m"
 
-      eval "arr$newhead_r[$newhead_c]=\"${tile_color}-$no_color\""
+      eval "arr$newhead_r[$newhead_c]=\"${tile_color}□$no_color\""
     eval "arr$head_r[$head_c]=\"${tile_color_symbol}1$no_color\""
 
   head_c=$head_ctemp
