@@ -139,14 +139,14 @@ show_brush() {
   tile_color="\e["$((90))";"$((40 + tile_color_index_new))"m"
   tile_color_symbol="\e["$((30 + tile_color_index))";"$((40 + tile_color_index))"m"
   if [ "$eraser" -eq 0 ]; then
-    icon="■"
-    eval "arr$1[$2]=\"${tile_color}■$no_color\""
+    icon="="
+    eval "arr$1[$2]=\"${tile_color}O$no_color\""
     eval "arr$head_r[$head_c]=\"${brush_color}1$no_color\""
     eval "matrix$head_r[$head_c]=\"$((colornr))\""
 
   else
-    icon="□"
-    eval "arr$1[$2]=\"${tile_color}□$no_color\""
+    icon="-"
+    eval "arr$1[$2]=\"${tile_color}-$no_color\""
     eval "arr$head_r[$head_c]=\"${tile_color_symbol}1$no_color\""
 
   fi
