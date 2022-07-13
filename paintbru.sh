@@ -224,7 +224,8 @@ draw_loop() {
 
     fi
 
-    draw_board
+          draw_board > /tmp/output.ansi
+          ansilove -o /tmp/output.png /tmp/output.ansi
     sleep 0.03
   done
 
