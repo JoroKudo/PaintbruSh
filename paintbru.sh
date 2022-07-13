@@ -43,7 +43,7 @@ move_and_draw() {
   echo -ne "\e[${1};${2}H$3"
 }
 
-draw_board() {
+draw_canvas() {
   move_and_draw 1 1 "$border_color+$no_color"
   for ((i = 2; i <= width + 1; i++)); do
     move_and_draw 1 "$i" "$border_color-$no_color"
@@ -63,6 +63,8 @@ draw_board() {
   done
   move_and_draw $((height)) $((width + 2)) "$border_color+$no_color"
 
+}
+draw_ui() {
   echo -e "$coloreto$coloreto"
   printf '\e[K'
 
@@ -77,6 +79,11 @@ draw_board() {
   printf " $dialog"
 
   echo
+
+}
+draw_board() {
+  draw_canvas
+  draw_ui
 }
 print_style() {
 
@@ -191,10 +198,12 @@ draw_loop() {
       delta_dir=3
       ;;
     ["s"])
-tile_color_fg=0;
-      dialog="exported image"
-      draw_board >/tmp/output.ansi
+      tile_color_fg=0
+      clear
+      draw_canvas >/tmp/output.ansi
       ansilove -c $COLUMNS -o drawingoutput.png /tmp/output.ansi >/dev/null
+      draw_board
+      dialog="exported image"
 
       ;;
 
