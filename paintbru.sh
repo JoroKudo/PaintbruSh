@@ -178,7 +178,7 @@ export_drawing() {
   FILE=drawingoutput/drawingoutput
 
   while [ -f "${FILE}.png" ]; do
-    filenr=${filenr}+1
+    filenr=$((filenr+1))
     FILE="drawingoutput/drawingoutput(${filenr})"
   done
   FILE="${FILE}.png"
