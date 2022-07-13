@@ -174,11 +174,11 @@ change_dir() {
 }
 
 export_drawing() {
-  FILE=drawingoutput/drawingoutput.png
+  FILE=drawingoutput/drawingoutput
   filenr=0
   while [ -f "${FILE}.png" ]; do
     filenr++
-       FILE="${FILE}(${filenr})"
+       FILE="drawingoutput/drawingoutput(${filenr})"
   done
    FILE="${FILE}.png"
       tile_color_fg=0
