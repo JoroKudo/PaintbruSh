@@ -9,6 +9,7 @@ declare -i head_rtemp head_ctemp
 declare body
 declare matrix
 colornr=2
+filenr=0
 declare -i direction delta_dir
 icon=""
 dialog=""
@@ -175,18 +176,18 @@ change_dir() {
 
 export_drawing() {
   FILE=drawingoutput/drawingoutput
-  filenr=0
+
   while [ -f "${FILE}.png" ]; do
-    filenr++
-       FILE="drawingoutput/drawingoutput(${filenr})"
+    filenr=${filenr}+1
+    FILE="drawingoutput/drawingoutput(${filenr})"
   done
-   FILE="${FILE}.png"
-      tile_color_fg=0
-      clear
-      draw_canvas >/tmp/output.ansi
-      ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
-      draw_board
-      dialog="exported image"
+  FILE="${FILE}.png"
+  tile_color_fg=0
+  clear
+  draw_canvas >/tmp/output.ansi
+  ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
+  draw_board
+  dialog="exported image"
 }
 draw_loop() {
 
@@ -213,7 +214,7 @@ draw_loop() {
       delta_dir=3
       ;;
     ["s"])
-export_drawing
+      export_drawing
 
       ;;
 
