@@ -195,7 +195,7 @@ tile_color_fg=0;
       dialog="exported image"
 
       draw_board >/tmp/output.ansi
-      ansilove -c ${width+1} -o drawingoutput.png /tmp/output.ansi >/dev/null
+      ansilove -c ${width+1000} -o drawingoutput.png /tmp/output.ansi >/dev/null
 
       ;;
 
