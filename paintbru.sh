@@ -17,7 +17,7 @@ brush_color="\e[32;42m"
 no_color="\e[0m"
 tile_color="\e[0m"
 coloreto="\e[0;31;47m"
-
+tile_color_fg=90
 move_r=([0]=-1 [1]=0 [2]=1 [3]=0)
 move_c=([0]=0 [1]=1 [2]=0 [3]=-1)
 
@@ -73,7 +73,6 @@ draw_board() {
   print_style $coloreto $coloreto " <[H] LEFT>    <[J] DOWN>    <[K] UP>        <[L] RIGHT>         COLOR   "
   printf "$brush_color%b$coloreto\n" "   "
   printf '\e[K'
-
 
   printf " $dialog"
 
@@ -138,7 +137,7 @@ show_brush() {
   tile_color_index="matrix$head_r[$head_c]"
   tile_color_index_new="matrix$1[$2]"
 
-  tile_color="\e["$((90))";"$((40 + tile_color_index_new))"m"
+  tile_color="\e["$tile_color_fg";"$((40 + tile_color_index_new))"m"
   tile_color_symbol="\e["$((30 + tile_color_index))";"$((40 + tile_color_index))"m"
 
   if [ "$eraser" -eq 0 ]; then
@@ -147,13 +146,13 @@ show_brush() {
     eval "arr$head_r[$head_c]=\"${brush_color}1$no_color\""
     eval "matrix$head_r[$head_c]=\"$((colornr))\""
 
-  else
+  elif [ "$eraser" -eq 1 ]; then
     icon="□"
 
     eval "arr$head_r[$head_c]=\"${tile_color_symbol}1$no_color\""
 
   fi
-      eval "arr$1[$2]=\"${tile_color}$icon$no_color\""
+  eval "arr$1[$2]=\"${tile_color}$icon$no_color\""
 
   head_c=$head_ctemp
   head_r=$head_rtemp
@@ -192,13 +191,15 @@ draw_loop() {
       delta_dir=3
       ;;
     ["s"])
-     icon=""
-     dialog="exported image"
-            draw_board > /tmp/output.ansi
-                ansilove -o drawingoutput.png /tmp/output.ansi >/dev/null
+tile_color_fg=0;
+      dialog="exported image"
+
+      draw_board >/tmp/output.ansi
+      ansilove -c 100 -o drawingoutput.png /tmp/output.ansi >/dev/null
+
       ;;
-    \
-      ["t"])
+
+    ["t"])
 
       for ((i = 1; i <= height; i++)); do
 
@@ -233,7 +234,7 @@ draw_loop() {
 
     fi
 
-          draw_board
+    draw_board
     sleep 0.03
   done
 
