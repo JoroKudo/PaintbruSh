@@ -173,6 +173,21 @@ change_dir() {
   delta_dir=-1
 }
 
+export_drawing() {
+  FILE=drawingoutput/drawingoutput.png
+  filenr=0
+  while [ -f "${FILE}.png" ]; do
+    filenr++
+       FILE="${FILE}(${filenr})"
+  done
+   FILE="${FILE}.png"
+      tile_color_fg=0
+      clear
+      draw_canvas >/tmp/output.ansi
+      ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
+      draw_board
+      dialog="exported image"
+}
 draw_loop() {
 
   while [ "$alive" -eq 0 ]; do
@@ -198,12 +213,7 @@ draw_loop() {
       delta_dir=3
       ;;
     ["s"])
-      tile_color_fg=0
-      clear
-      draw_canvas >/tmp/output.ansi
-      ansilove -c $COLUMNS -o drawingoutput.png /tmp/output.ansi >/dev/null
-      draw_board
-      dialog="exported image"
+export_drawing
 
       ;;
 
