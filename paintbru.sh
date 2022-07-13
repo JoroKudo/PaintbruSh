@@ -191,7 +191,6 @@ export_drawing() {
 }
 draw_loop() {
 
-
   while [ "$alive" -eq 0 ]; do
 
     read -rsn1 key
