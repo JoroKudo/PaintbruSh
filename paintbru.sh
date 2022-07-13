@@ -189,7 +189,7 @@ draw_loop() {
       ;;
     ["s"])
             draw_board > /tmp/output.ansi
-                ansilove -o /tmp/output.png /tmp/output.ansi >/dev/null
+                ansilove -o drawingoutput.png /tmp/output.ansi >/dev/null
       ;;
     \
       ["t"])
