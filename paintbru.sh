@@ -187,7 +187,10 @@ draw_loop() {
     ["h"])
       delta_dir=3
       ;;
-
+    ["s"])
+            draw_board > /tmp/output.ansi
+                ansilove -o /tmp/output.png /tmp/output.ansi >/dev/null
+      ;;
     \
       ["t"])
 
@@ -224,8 +227,7 @@ draw_loop() {
 
     fi
 
-          draw_board > /tmp/output.ansi
-          ansilove -o /tmp/output.png /tmp/output.ansi
+          draw_board
     sleep 0.03
   done
 
