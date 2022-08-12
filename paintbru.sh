@@ -205,7 +205,7 @@ export_drawing() {
   FILE="${FILE}.png"
   tile_color_fg=0
   clear
- brush_color="\e[0;34;47m"
+ brush_color="\e[0;30;40m"
   draw_canvas_noborder >/tmp/output.ansi
   ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
   draw_board
