@@ -7,13 +7,10 @@ declare readonly -i height=$(($(tput lines) - 5)) width=$(($(tput cols) - 2))
 declare -i head_r head_c
 declare -i head_rtemp head_ctemp
 declare body
-declare colormatrix
-declare symbolmatrix
-
+declare matrix
 colornr=2
 filenr=0
 declare -i direction delta_dir
-symbol="1"
 icon=""
 dialog=""
 border_color="\e[0;34;47m"
@@ -22,8 +19,6 @@ no_color="\e[0m"
 tile_color="\e[0m"
 coloreto="\e[0;31;47m"
 tile_color_fg=90
-tile_symbol_fg=" "
-
 move_r=([0]=-1 [1]=0 [2]=1 [3]=0)
 move_c=([0]=0 [1]=1 [2]=0 [3]=-1)
 
@@ -37,8 +32,7 @@ init_screen() {
 
       eval "arr$i[$j]=' '"
 
-      eval "colormatrix$i[$j]='0'"
-      eval "symbolmatrix$i[$j]=' '"
+      eval "matrix$i[$j]='0'"
     done
 
   done
@@ -157,11 +151,8 @@ move_brush() {
 show_brush() {
   eval "local pos=\${arr$1[$2]}"
 
-  tile_symbol_index="symbolmatrix$head_r[$head_c]"
-  tile_symbol="symbolmatrix$1[$2]"
-
-  tile_color_index="colormatrix$head_r[$head_c]"
-  tile_color_index_new="colormatrix$1[$2]"
+  tile_color_index="matrix$head_r[$head_c]"
+  tile_color_index_new="matrix$1[$2]"
 
   tile_color="\e["$tile_color_fg";"$((40 + tile_color_index_new))"m"
   tile_color_symbol="\e["$((30 + tile_color_index))";"$((40 + tile_color_index))"m"
@@ -170,12 +161,9 @@ show_brush() {
     icon="#"
 
     eval "arr$head_r[$head_c]=\"${brush_color}1$no_color\""
-    eval "colormatrix$head_r[$head_c]=\"$((colornr))\""
-    eval "symbolmatrix$head_r[$head_c]="$((symbol))
+    eval "matrix$head_r[$head_c]=\"$((colornr))\""
 
-  elif
-    [ "$eraser" -eq 1 ]
-  then
+  elif [ "$eraser" -eq 1 ]; then
     icon="-"
 
     eval "arr$head_r[$head_c]=\"${tile_color_symbol}1$no_color\""
@@ -194,7 +182,6 @@ change_dir() {
 
   delta_dir=-1
 }
-
 export_drawing() {
   FILE=drawingoutput/drawingoutput
   icon=" "
@@ -239,17 +226,13 @@ draw_loop() {
       export_drawing
 
       ;;
-    ["c"])
-      read youmom
-      symbol=$youmom
-      ;;
 
     ["t"])
 
       for ((i = 1; i <= height; i++)); do
 
         for ((j = 1; j <= width; j++)); do
-          eval echo -n "\"\${colormatrix$i[$j]}\""
+          eval echo -n "\"\${matrix$i[$j]}\""
 
         done
 
@@ -291,7 +274,7 @@ clear_app() {
   echo -e "\e[?25h"
 }
 change_color() {
-  brush_color="\e["$((30 + colornr))";"$((40))"m"
+  brush_color="\e["$((30 + colornr))";"$((40 + colornr))"m"
 
 }
 
