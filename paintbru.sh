@@ -49,7 +49,9 @@ draw_canvas_noborder() {
   for ((i = 0; i < height - 2; i++)); do
     eval echo -en "\"\${arr$i[*]}\""
   done
-
+  for ((i = 2; i <= width + 1; i++)); do
+    move_and_draw $((height)) "$i" "$border_color-$no_color"
+  done
 
 
 }
