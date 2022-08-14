@@ -45,16 +45,14 @@ move_and_draw() {
 }
 draw_canvas_noborder() {
 
-
   for ((i = 0; i < height - 2; i++)); do
     eval echo -en "\"\${arr$i[*]}\""
-  done
-  for ((i = 2; i <= width + 1; i++)); do
-    move_and_draw $((height)) "$i" "$border_color-$no_color"
-  done
+    echo -e "$border_color  $no_color"
 
+  done
 
 }
+
 draw_canvas() {
   move_and_draw 1 1 "$border_color+$no_color"
   for ((i = 2; i <= width + 1; i++)); do
@@ -194,9 +192,9 @@ export_drawing() {
   FILE="${FILE}.png"
   tile_color_fg=0
   clear
- no_color="\e[0;30;40m"
+  no_color="\e[0;30;40m"
   draw_canvas_noborder >/tmp/output.ansi
-  ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
+  ansilove -c $COLUMNS-2 -o ${FILE} /tmp/output.ansi >/dev/null
   draw_board
   dialog="exported image"
 }
