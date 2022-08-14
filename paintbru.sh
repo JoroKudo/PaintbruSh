@@ -183,11 +183,11 @@ change_dir() {
   delta_dir=-1
 }
 export_drawing() {
-  FILE=../drawingoutput/drawingoutput
+  FILE=drawingoutput/drawingoutput
   icon=" "
   while [ -f "${FILE}.png" ]; do
     filenr=$((filenr + 1))
-    FILE="../drawingoutput/drawingoutput(${filenr})"
+    FILE="drawingoutput/drawingoutput(${filenr})"
   done
   FILE="${FILE}.png"
   tile_color_fg=0
