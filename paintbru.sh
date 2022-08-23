@@ -192,9 +192,9 @@ export_drawing() {
   FILE="${FILE}.png"
   tile_color_fg=0
   clear
-  no_color="\e[0;30;40m"
+ no_color="\e[0;30;40m"
   draw_canvas_noborder >/tmp/output.ansi
-  ansilove -c $COLUMNS-2 -o ${FILE} /tmp/output.ansi >/dev/null
+  ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
   draw_board
   dialog="exported image"
 }
