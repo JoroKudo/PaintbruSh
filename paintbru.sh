@@ -43,7 +43,7 @@ move_and_draw() {
 
   echo -ne "\e[${1};${2}H$3"
 }
-draw_canvas_noborder() {
+draw_canvas() {
 
   for ((i = 0; i < height - 2; i++)); do
     eval echo -en "\"\${arr$i[*]}\""
@@ -53,7 +53,7 @@ draw_canvas_noborder() {
 
 }
 
-draw_canvas() {
+draw_canvas_noborder() {
   move_and_draw 1 1 "$border_color+$no_color"
   for ((i = 2; i <= width + 1; i++)); do
     move_and_draw 1 "$i" "$border_color-$no_color"
@@ -183,20 +183,23 @@ change_dir() {
   delta_dir=-1
 }
 export_drawing() {
-  FILE=drawingoutput/drawingoutput
-  icon=" "
+  if [ -d "draw" ]
+  then
+      echo "Directory "
+  else
+      mkdir draw
+  fi
+  FILE=draw/drawingoutput
+icon=" "
   while [ -f "${FILE}.png" ]; do
-    filenr=$((filenr + 1))
-    FILE="drawingoutput/drawingoutput(${filenr})"
+    filenr=$((filenr+1))
+    FILE="draw/drawingoutput(${filenr})"
   done
   FILE="${FILE}.png"
   tile_color_fg=0
   clear
-  no_color="\e[0;30;40m"
-
-  #TODO make canvas_noBorder work
   draw_canvas >/tmp/output.ansi
-  ansilove -c $COLUMNS-2 -o ${FILE} /tmp/output.ansi >/dev/null
+  ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
   draw_board
   dialog="exported image"
 }
