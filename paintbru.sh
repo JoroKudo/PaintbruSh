@@ -21,7 +21,8 @@ coloreto="\e[0;31;47m"
 tile_color_fg=90
 move_r=([0]=-1 [1]=0 [2]=1 [3]=0)
 move_c=([0]=0 [1]=1 [2]=0 [3]=-1)
-
+  penpos1=0
+penpos2=0
 init_screen() {
 
   clear
@@ -43,17 +44,20 @@ move_and_draw() {
 
   echo -ne "\e[${1};${2}H$3"
 }
-draw_canvas() {
+draw_canvas_noborder() {
 
   for ((i = 0; i < height - 2; i++)); do
+
+
     eval echo -en "\"\${arr$i[*]}\""
-    echo -e "$border_color  $no_color"
+ printf "$no_color%b$no_color" "  "
+
 
   done
 
 }
 
-draw_canvas_noborder() {
+draw_canvas() {
   move_and_draw 1 1 "$border_color+$no_color"
   for ((i = 2; i <= width + 1; i++)); do
     move_and_draw 1 "$i" "$border_color-$no_color"
@@ -170,7 +174,8 @@ show_brush() {
 
   fi
   eval "arr$1[$2]=\"${tile_color}$icon$no_color\""
-
+  penpos1=$1
+penpos2=$2
   head_c=$head_ctemp
   head_r=$head_rtemp
 
@@ -198,10 +203,13 @@ icon=" "
   FILE="${FILE}.png"
   tile_color_fg=0
   clear
-  draw_canvas >/tmp/output.ansi
+  eval "arr$penpos1[$penpos2]=\"${tile_color} $no_color\""
+  draw_canvas_noborder >/tmp/output.ansi
   ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
   draw_board
   dialog="exported image"
+  eval "arr$penpos1[$penpos2]=\"${tile_color}#$no_color\""
+  draw_canvas
 }
 draw_loop() {
 
