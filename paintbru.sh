@@ -75,10 +75,10 @@ draw_ui() {
   printf '\e[K'
 
   printf "\n"
-  print_style $coloreto $coloreto " <[SPACE] LIFT/LOWER PEN>    <[1-7] COLORS>  <[0] ERASE>        CURRENT  "
+  print_style $coloreto $coloreto " <[SPACE] LIFT/LOWER PEN>    <[1-7] COLORS>  <[0] ERASE>   <[S] EXPORT>   CURRENT  "
   printf "$brush_color%b$coloreto\n" "   "
 
-  print_style $coloreto $coloreto " <[H] LEFT>    <[J] DOWN>    <[K] UP>        <[L] RIGHT>         COLOR   "
+  print_style $coloreto $coloreto " <[H] LEFT>    <[J] DOWN>    <[K] UP>        <[L] RIGHT>                   COLOR   "
   printf "$brush_color%b$coloreto\n" "   "
   printf '\e[K'
 
