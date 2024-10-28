@@ -1,28 +1,25 @@
 #!/bin/bash
 
+# Define constants and variables
 IFS=''
-
-declare readonly -i height=$(($(tput lines) - 5)) width=$(($(tput cols) - 2))
-
-declare -i head_r head_c
-declare -i head_rtemp head_ctemp
-declare body
-declare matrix
-colornr=2
-filenr=0
-declare -i direction delta_dir
+declare -r height=$(( $(tput lines) - 5 ))
+declare -r width=$(( $(tput cols) - 2 ))
+declare -i head_r head_c head_rtemp head_ctemp direction delta_dir
+declare body matrix
+declare -i colornr=2 filenr=0
 icon=""
 dialog=""
 border_color="\e[0;34;47m"
 brush_color="\e[32;42m"
-no_color="\e[0m"
-tile_color="\e[0m"
+no_color="\e[30;40m"
+tile_color="\e[30;40m"
 coloreto="\e[0;31;47m"
 tile_color_fg=90
-move_r=([0]=-1 [1]=0 [2]=1 [3]=0)
-move_c=([0]=0 [1]=1 [2]=0 [3]=-1)
-  penpos1=0
+move_r=(-1 0 1 0)
+move_c=(0 1 0 -1)
+penpos1=0
 penpos2=0
+# Initialize screen
 init_screen() {
 
   clear
@@ -40,23 +37,21 @@ init_screen() {
 
 }
 
+# Move cursor to position and draw
 move_and_draw() {
 
   echo -ne "\e[${1};${2}H$3"
 }
+# Draw the canvas without borders
 draw_canvas_noborder() {
 
   for ((i = 0; i < height - 2; i++)); do
-
-
     eval echo -en "\"\${arr$i[*]}\""
- printf "$no_color%b$no_color" "  "
-
-
+    printf "$no_color%b$no_color" "  "
   done
 
 }
-
+# Draw canvas with borders
 draw_canvas() {
   move_and_draw 1 1 "$border_color+$no_color"
   for ((i = 2; i <= width + 1; i++)); do
@@ -78,6 +73,7 @@ draw_canvas() {
   move_and_draw $((height)) $((width + 2)) "$border_color+$no_color"
 
 }
+# Draw UI elements
 draw_ui() {
   echo -e "$coloreto$coloreto"
   printf '\e[K'
@@ -106,6 +102,8 @@ print_style() {
   printf "$1%b$2" "$3"
 
 }
+
+# Initialize brush position
 init_tools() {
   direction=0
   alive=0
@@ -141,7 +139,7 @@ init_tools() {
     b=${b#[0-3]}
   done
 }
-
+# Move brush and update display
 move_brush() {
 
   local newhead_r=$((head_rtemp + move_r[direction]))
@@ -151,7 +149,7 @@ move_brush() {
   head_rtemp=$newhead_r
   show_brush $newhead_r $newhead_c
 }
-
+# Update brush display position
 show_brush() {
   eval "local pos=\${arr$1[$2]}"
 
@@ -180,124 +178,66 @@ penpos2=$2
   head_r=$head_rtemp
 
 }
-
+# Handle direction changes
 change_dir() {
 
   direction=$1
-
   delta_dir=-1
 }
+# Export drawing as an image
 export_drawing() {
-  if [ -d "draw" ]
-  then
-      echo "Directory "
-  else
-      mkdir draw
-  fi
-  FILE=draw/drawingoutput
-icon=" "
-  while [ -f "${FILE}.png" ]; do
-    filenr=$((filenr+1))
-    FILE="draw/drawingoutput(${filenr})"
-  done
-  FILE="${FILE}.png"
-  tile_color_fg=0
-  clear
-  eval "arr$penpos1[$penpos2]=\"${tile_color} $no_color\""
-  draw_canvas_noborder >/tmp/output.ansi
-  ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
-  draw_board
-  dialog="exported image"
-  eval "arr$penpos1[$penpos2]=\"${tile_color}#$no_color\""
-  draw_canvas
-}
-draw_loop() {
-
-  while [ "$alive" -eq 0 ]; do
-
-    read -rsn1 key
-
-    case "$key" in
-    ["q"])
-      kill -"$SIG_QUIT"
-      return
-      ;;
-
-    ["k"])
-      delta_dir=0
-      ;;
-    ["l"])
-      delta_dir=1
-      ;;
-    ["j"])
-      delta_dir=2
-      ;;
-    ["h"])
-      delta_dir=3
-      ;;
-    ["s"])
-      export_drawing
-
-      ;;
-
-    ["t"])
-
-      for ((i = 1; i <= height; i++)); do
-
-        for ((j = 1; j <= width; j++)); do
-          eval echo -n "\"\${matrix$i[$j]}\""
-
-        done
-
-        echo
-      done
-
-      ;;
-    [" "])
-      if [ "$eraser" -eq 0 ]; then
-
-        eraser=1
-      else
-        eraser=0
-      fi
-
-      ;;
-
-    [0,1,2,3,4,5,6,7])
-      colornr=$((key))
-      change_color
-
-      ;;
-    esac
-    if [ "$delta_dir" -ne -1 ]; then
-      change_dir $delta_dir
-      move_brush
-
-    fi
-
+    mkdir -p draw
+    FILE="draw/drawingoutput"
+    while [ -f "${FILE}.png" ]; do
+        filenr=$((filenr+1))
+        FILE="draw/drawingoutput(${filenr})"
+    done
+    FILE="${FILE}.png"
+    clear
+    eval "arr$penpos1[$penpos2]=\"${tile_color} $no_color\""
+    draw_canvas_noborder >/tmp/output.ansi
+    ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
     draw_board
-    sleep 0.03
-  done
-
-  kill -"$SIG_DEAD" $$
+    dialog="exported image"
+    eval "arr$penpos1[$penpos2]=\"${tile_color}#$no_color\""
+    draw_canvas
+}
+# Main drawing loop
+draw_loop() {
+    while true; do
+        read -rsn1 key
+        case "$key" in
+            "q") break ;;
+            "k") delta_dir=0 ;;
+            "l") delta_dir=1 ;;
+            "j") delta_dir=2 ;;
+            "h") delta_dir=3 ;;
+            "s") export_drawing ;;
+            " ") eraser=$((1 - eraser)) ;;
+            [0-7]) colornr=$((key)); change_color ;;
+        esac
+        if [ "$delta_dir" -ne -1 ]; then
+            change_dir $delta_dir
+            move_brush
+        fi
+        draw_board
+        sleep 0.03
+    done
 }
 
+# Cleanup on exit
 clear_app() {
-  stty echo
-  echo -e "\e[?25h"
-}
+    stty echo
+    echo -e "\e[?25h"
+}# Change brush color
 change_color() {
   brush_color="\e["$((30 + colornr))";"$((40 + colornr))"m"
 
 }
-
+# Initialize and start drawing
 init_screen
 init_tools
-
 draw_board
-
 draw_loop
-
 clear_app
-
 exit 0
