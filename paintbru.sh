@@ -12,14 +12,13 @@ dialog=""
 border_color="\e[0;34;47m"
 brush_color="\e[32;42m"
 no_color="\e[30;40m"
-tile_color="\e[30;40m"
+tile_color="\e[0m"
 coloreto="\e[0;31;47m"
 tile_color_fg=90
 move_r=(-1 0 1 0)
 move_c=(0 1 0 -1)
 penpos1=0
 penpos2=0
-# Initialize screen
 init_screen() {
 
   clear
@@ -37,12 +36,10 @@ init_screen() {
 
 }
 
-# Move cursor to position and draw
 move_and_draw() {
 
   echo -ne "\e[${1};${2}H$3"
 }
-# Draw the canvas without borders
 draw_canvas_noborder() {
 
   for ((i = 0; i < height - 2; i++)); do
@@ -51,7 +48,7 @@ draw_canvas_noborder() {
   done
 
 }
-# Draw canvas with borders
+
 draw_canvas() {
   move_and_draw 1 1 "$border_color+$no_color"
   for ((i = 2; i <= width + 1; i++)); do
@@ -73,7 +70,6 @@ draw_canvas() {
   move_and_draw $((height)) $((width + 2)) "$border_color+$no_color"
 
 }
-# Draw UI elements
 draw_ui() {
   echo -e "$coloreto$coloreto"
   printf '\e[K'
@@ -102,8 +98,6 @@ print_style() {
   printf "$1%b$2" "$3"
 
 }
-
-# Initialize brush position
 init_tools() {
   direction=0
   alive=0
@@ -139,7 +133,7 @@ init_tools() {
     b=${b#[0-3]}
   done
 }
-# Move brush and update display
+
 move_brush() {
 
   local newhead_r=$((head_rtemp + move_r[direction]))
@@ -149,7 +143,7 @@ move_brush() {
   head_rtemp=$newhead_r
   show_brush $newhead_r $newhead_c
 }
-# Update brush display position
+
 show_brush() {
   eval "local pos=\${arr$1[$2]}"
 
@@ -178,10 +172,11 @@ penpos2=$2
   head_r=$head_rtemp
 
 }
-# Handle direction changes
+
 change_dir() {
 
   direction=$1
+
   delta_dir=-1
 }
 # Export drawing as an image
@@ -229,12 +224,13 @@ draw_loop() {
 clear_app() {
     stty echo
     echo -e "\e[?25h"
-}# Change brush color
+}
+
 change_color() {
   brush_color="\e["$((30 + colornr))";"$((40 + colornr))"m"
 
 }
-# Initialize and start drawing
+
 init_screen
 init_tools
 draw_board
