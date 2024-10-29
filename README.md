@@ -43,4 +43,4 @@ These are the default controls, However they can be adjusted in the config file.
 > **Note:** Ensure `ansilove` is installed for exporting functionality.
 
 
-Once you finish your artwork, press **x** to save it as a PNG file. The output file will be saved in the current directory.
+Once you finish your artwork, press **x** to save it as a PNG file. The output file will be saved in the directory specified in the Config file.
