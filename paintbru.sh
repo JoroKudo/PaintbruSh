@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Define constants and variables
+. brush.config
 IFS=''
 declare -r height=$(( $(tput lines) - 5 ))
 declare -r width=$(( $(tput cols) - 2 ))
@@ -19,6 +20,7 @@ move_r=(-1 0 1 0)
 move_c=(0 1 0 -1)
 penpos1=0
 penpos2=0
+
 init_screen() {
 
   clear
@@ -75,10 +77,10 @@ draw_ui() {
   printf '\e[K'
 
   printf "\n"
-  print_style $coloreto $coloreto " <[SPACE] LIFT/LOWER PEN>    <[1-7] COLORS>  <[0] ERASE>   <[S] EXPORT>   CURRENT  "
+  print_style $coloreto $coloreto " <[SPACE] LIFT/LOWER PEN>    <[1-7] COLORS>  <[0] ERASE>   <[${EXPORT_KEY}] EXPORT>   CURRENT  "
   printf "$brush_color%b$coloreto\n" "   "
 
-  print_style $coloreto $coloreto " <[H] LEFT>    <[J] DOWN>    <[K] UP>        <[L] RIGHT>                   COLOR   "
+  print_style $coloreto $coloreto " <[${L_KEY}] LEFT>    <[${DOWN_KEY}] DOWN>    <[${UP_KEY}] UP>        <[${R_KEY}] RIGHT>                   COLOR   "
   printf "$brush_color%b$coloreto\n" "   "
   printf '\e[K'
 
@@ -100,8 +102,7 @@ print_style() {
 }
 init_tools() {
   direction=0
-  alive=0
-  eraser=0
+  hover=0
 
   delta_dir=-1
 
@@ -153,14 +154,14 @@ show_brush() {
   tile_color="\e["$tile_color_fg";"$((40 + tile_color_index_new))"m"
   tile_color_symbol="\e["$((30 + tile_color_index))";"$((40 + tile_color_index))"m"
 
-  if [ "$eraser" -eq 0 ]; then
-    icon="#"
+  if [ "$hover" -eq 0 ]; then
+    icon="■"
 
     eval "arr$head_r[$head_c]=\"${brush_color}1$no_color\""
     eval "matrix$head_r[$head_c]=\"$((colornr))\""
 
-  elif [ "$eraser" -eq 1 ]; then
-    icon="-"
+  elif [ "$hover" -eq 1 ]; then
+    icon="□"
 
     eval "arr$head_r[$head_c]=\"${tile_color_symbol}1$no_color\""
 
@@ -181,11 +182,11 @@ change_dir() {
 }
 # Export drawing as an image
 export_drawing() {
-    mkdir -p draw
-    FILE="draw/drawingoutput"
+    mkdir -p $EXPORT_DIR
+    FILE="${EXPORT_DIR}/drawingoutput"
     while [ -f "${FILE}.png" ]; do
         filenr=$((filenr+1))
-        FILE="draw/drawingoutput(${filenr})"
+        FILE="${EXPORT_DIR}/drawingoutput(${filenr})"
     done
     FILE="${FILE}.png"
     clear
@@ -194,7 +195,7 @@ export_drawing() {
     ansilove -c $COLUMNS -o ${FILE} /tmp/output.ansi >/dev/null
     draw_board
     dialog="exported image"
-    eval "arr$penpos1[$penpos2]=\"${tile_color}#$no_color\""
+    eval "arr$penpos1[$penpos2]=\"${tile_color}$icon$no_color\""
     draw_canvas
 }
 # Main drawing loop
@@ -202,13 +203,13 @@ draw_loop() {
     while true; do
         read -rsn1 key
         case "$key" in
-            "q") break ;;
-            "k") delta_dir=0 ;;
-            "l") delta_dir=1 ;;
-            "j") delta_dir=2 ;;
-            "h") delta_dir=3 ;;
-            "s") export_drawing ;;
-            " ") eraser=$((1 - eraser)) ;;
+            $QUIT_KEY) break ;;
+            $UP_KEY) delta_dir=0 ;;
+            $R_KEY) delta_dir=1 ;;
+            $DOWN_KEY) delta_dir=2 ;;
+            $L_KEY) delta_dir=3 ;;
+            $EXPORT_KEY) export_drawing ;;
+            " ") hover=$((1 - hover)) ;;
             [0-7]) colornr=$((key)); change_color ;;
         esac
         if [ "$delta_dir" -ne -1 ]; then
