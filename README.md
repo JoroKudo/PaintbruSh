@@ -9,8 +9,8 @@ Clone the repository and navigate to the project directory.
 
 ```bash
 git clone https://github.com/JoroKudo/PaintbruSh.git
-cd paintbrush
-chmod +x paintbrush.sh
+cd PaintbruSh
+chmod +x paintbru.sh
 ```
 Ensure that you have [ansilove](https://github.com/ansilove/ansilove) installed to enable image export functionality.
 
@@ -19,10 +19,10 @@ Ensure that you have [ansilove](https://github.com/ansilove/ansilove) installed 
 
 
 ## Usage
-Run `paintbrush.sh` to start drawing in the terminal.
+Run `paintbru.sh` to start drawing in the terminal.
 
 ```bash
-./paintbrush.sh
+./paintbru.sh
 ```
 
 ## Controls
